@@ -1,13 +1,16 @@
+"use client"
 import Image from "next/image";
+
 type ImgProps = {
     src: string;
 }
 
-type Props = {
+type User = {
   img: ImgProps
+  name: string
 }
 
-const Profile = ({ img }: Props) => {
+const Profile = ({ img, name }: User) => {
   return (
     <div className="font-times w-64 flex flex-col space-y-4 h-56 items-center bg-slate-600 rounded-md mt-9 mb-8 pt-5">
         <Image
@@ -16,7 +19,7 @@ const Profile = ({ img }: Props) => {
           height={100}
           alt="default profile picture"
         />
-        <div className="text-center text-white text-2xl">Fuyuki Malahom</div>
+        <div className="text-center text-white text-2xl">{name}</div>
       </div>
   )
 }

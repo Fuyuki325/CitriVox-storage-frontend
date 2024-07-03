@@ -5,24 +5,15 @@ import Upload from "@/components/Upload";
 
 const Home = () => {
 
-  const handleDragOver = (event) => {
-    event.preventDefault();
-  }
-
-  const handleOnDrop = (event) => {
-    event.preventDefault();
-  }
-
 
 
   return (
     <div className="flex flex-col bg-slate-400 h-screen items-center">
       <Profile 
         img={pfp}
+        name="Fuyuki Malahom"
       />
-      <Upload 
-
-      />
+      <Upload />
     </div>
   );
 };

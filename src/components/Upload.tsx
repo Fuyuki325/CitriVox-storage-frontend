@@ -1,6 +1,26 @@
-const Upload = ({ handleDragOver, handleOnDrop}) => {
+"use client"
+
+import { useState } from "react"
+
+const Upload = () => {
+  const [files, setFiles] = useState<FileList | null>(null);
+
+  const handleDragOver = (event: React.DragEvent<HTMLDivElement>) => {
+    event.preventDefault();
+  }
+
+  const handleOnDrop = (event: React.DragEvent<HTMLDivElement>) => {
+    event.preventDefault();
+    setFiles(event.dataTransfer.files);
+  }
+
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (event.target.files) {
+      setFiles(event.target.files);
+    }
+  }
   return (
-      <div className="flex flex-col w-[50%] h-56 outline-dashed hover:outline-sky-400 transition-all duration-200 outline-2 outline-offset-2"
+      <div className="flex flex-col w-[50%] h-56 outline-dashed hover:outline-sky-500 outline-4 transition-all duration-200 outline-offset-2"
         onDragOver={handleDragOver}
         onDrop={handleOnDrop}
       >
@@ -9,12 +29,14 @@ const Upload = ({ handleDragOver, handleOnDrop}) => {
             Upload
             <input
               type="file"
+              multiple
+              onChange={handleFileChange}
               className="absolute inset-0 w-full h-full bg-black opacity-0 cursor-pointer"
-              onchange="updateFileName(event)"
+              
             />
           </label>
           <span id="file-name" className="ml-4 text-sm text-slate-500">
-            No files uploaded
+            {files ? `${files.length} file(s) uploaded` : 'No files uploaded'}
           </span>
         </div>
       </div>

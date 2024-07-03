@@ -8,7 +8,7 @@ import Posts from "@/components/posts/Posts";
 
 const Home = () => {
   return (
-    <div className="flex flex-col bg-slate-400 h-screen items-center">
+    <div className="flex flex-col bg-background h-screen items-center">
       <div className="bg-white w-full flex flex-col items-center justify-center mt-6 pb-1">
         <Image 
           src={Logo}

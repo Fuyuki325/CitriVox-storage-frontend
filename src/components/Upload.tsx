@@ -1,10 +1,18 @@
 "use client";
 import { useState } from "react";
 import toast from "react-hot-toast";
+import { FC } from "react";
+import axios from "axios";
 
-const Upload = () => {
-  const [files, setFiles] = useState<FileList | null>(null);
+interface Props {
+  BASE_URL: string | undefined;
+  VERSION: string | undefined;
+}
+
+const Upload: FC<Props> = ({ BASE_URL, VERSION }) => {
+  const [files, setFiles] = useState<File | null>(null);
   const [dragging, setDragging] = useState<Boolean | null>(null);
+  const [processing, setProcessing] = useState(false);
 
   const handleDragOver = (event: React.DragEvent<HTMLDivElement>) => {
     event.preventDefault();
@@ -18,7 +26,7 @@ const Upload = () => {
       toast.error("Only 1 file please")
       return
     }
-    setFiles(event.dataTransfer.files);
+    setFiles(event.dataTransfer.files[0]);
   };
 
   const handleDragLeave = (event: React.DragEvent<HTMLDivElement>) => {
@@ -26,9 +34,17 @@ const Upload = () => {
     setDragging(false);
   };
 
-  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files) {
-      setFiles(event.target.files);
+      setFiles(event.target.files[0]);
+      const response = await axios({
+        method: 'post',
+        url: `${BASE_URL}${VERSION}/image`,
+        data: {
+          firstName: 'Fred',
+          lastName: 'Flintstone'
+        }
+      });
     }
   };
 
@@ -51,7 +67,7 @@ const Upload = () => {
           />
         </label>
         <span id="file-name" className="text-sm text-slate-500">
-          {files ? `${files[0].name} uploaded` : "No files uploaded"}
+          {files ? `${files.name} uploaded` : "No files uploaded"}
         </span>
       </div>
     </div>

@@ -8,10 +8,9 @@ import Posts from "@/components/posts/Posts";
 import axios from "axios";
 
 const Home = async () => {
-  // Send a GET request
   const response = await axios({
     method: 'get',
-    url: `${process.env.BASE_URL}/v1/images`,
+    url: `${process.env.BASE_URL}${process.env.VERSION}/images`,
   });
   const images = response.data;
 
@@ -29,7 +28,10 @@ const Home = async () => {
         img={pfp}
         name="Fuyuki Malahom"
       />
-      <Upload />
+      <Upload 
+        BASE_URL={process.env.BASE_URL}
+        VERSION={process.env.VERSION}
+      />
       <Search />
       <Posts 
         images={images}

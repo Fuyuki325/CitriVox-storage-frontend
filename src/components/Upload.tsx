@@ -1,6 +1,6 @@
 "use client";
-
 import { useState } from "react";
+import toast from "react-hot-toast";
 
 const Upload = () => {
   const [files, setFiles] = useState<FileList | null>(null);
@@ -13,8 +13,12 @@ const Upload = () => {
 
   const handleOnDrop = (event: React.DragEvent<HTMLDivElement>) => {
     event.preventDefault();
-    setFiles(event.dataTransfer.files);
     setDragging(false);
+    if (event.dataTransfer.files.length > 1) {
+      toast.error("Only 1 file please")
+      return
+    }
+    setFiles(event.dataTransfer.files);
   };
 
   const handleDragLeave = (event: React.DragEvent<HTMLDivElement>) => {
@@ -47,7 +51,7 @@ const Upload = () => {
           />
         </label>
         <span id="file-name" className="text-sm text-slate-500">
-          {files ? `${files.length} file(s) uploaded` : "No files uploaded"}
+          {files ? `${files[0].name} uploaded` : "No files uploaded"}
         </span>
       </div>
     </div>

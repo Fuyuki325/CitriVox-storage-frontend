@@ -28,9 +28,9 @@ const Posts: FC<Props> = ({ images, BASE_URL, VERSION }) => {
   };
 
   return (
-    <>
-      <div className="flex w-[70%] font-times text-4xl pb-2">Posts</div>
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 w-[70%] gap-4">
+    <div className="flex flex-col w-full items-center justify-center">
+      <div className="font-times text-7xl pb-2">Posts</div>
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 w-[70%] gap-4 justify-items-center">
         {images.map((image) => (
           <div
             key={image.id.S}
@@ -59,7 +59,8 @@ const Posts: FC<Props> = ({ images, BASE_URL, VERSION }) => {
           </div>
         ))}
       </div>
-    </>
+
+    </div>
   );
 };
 

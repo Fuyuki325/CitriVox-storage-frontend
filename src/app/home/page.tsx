@@ -5,10 +5,18 @@ import Search from "@/components/Search";
 import Image from "next/image";
 import Logo from "@/../../public/CitriVox_PNG.png";
 import Posts from "@/components/posts/Posts";
+import axios from "axios";
 
-const Home = () => {
+const Home = async () => {
+  // Send a GET request
+  const response = await axios({
+    method: 'get',
+    url: `${process.env.BASE_URL}/v1/images`,
+  });
+  const images = response.data;
+
   return (
-    <div className="flex flex-col bg-background h-screen items-center">
+    <div className="flex flex-col bg-background items-center">
       <div className="bg-white w-full flex flex-col items-center justify-center mt-6 pb-1">
         <Image 
           src={Logo}
@@ -23,7 +31,11 @@ const Home = () => {
       />
       <Upload />
       <Search />
-      <Posts />
+      <Posts 
+        images={images}
+        BASE_URL={process.env.BASE_URL}
+        VERSION={process.env.VERSION}
+      />
     </div>
   );
 };

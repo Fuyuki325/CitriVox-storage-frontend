@@ -5,7 +5,7 @@ import { FC } from "react";
 import toast from "react-hot-toast";
 import { FiCopy } from "react-icons/fi";
 import axios from "axios";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 interface Image {
   id: InnerObject;
@@ -19,20 +19,29 @@ interface Props {
   images: Image[];
   BASE_URL: string | undefined;
   VERSION: string | undefined;
+  files: File | null;
+  setImageList: Function;
+  imageList: Image[];
 }
 
-const Posts: FC<Props> = ({ images, BASE_URL, VERSION }) => {
-  const [imageList, setImageList] = useState(images);
+const Posts: FC<Props> = ({
+  images,
+  BASE_URL,
+  VERSION,
+  files,
+  imageList,
+  setImageList,
+}) => {
   const copy = () => {
     toast.success("Copied URL!");
   };
 
   const handleDelete = async (imageid: string) => {
     const response = await axios({
-      method: 'delete',
+      method: "delete",
       url: `${BASE_URL}${VERSION}/image?imageid=${imageid}`,
     });
-    setImageList(imageList.filter((image) => image.id.S !== imageid))
+    setImageList(imageList.filter((image) => image.id.S !== imageid));
     toast.success("Deleted Image!");
   };
 
@@ -41,10 +50,7 @@ const Posts: FC<Props> = ({ images, BASE_URL, VERSION }) => {
       <div className="font-times text-7xl pb-2">Posts</div>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 w-[70%] gap-4 justify-items-center">
         {imageList.map((image) => (
-          <div
-            key={image.id.S}
-            className="relative w-56 h-56 group"
-          >
+          <div key={image.id.S} className="relative w-56 h-56 group">
             <Image
               src={`${BASE_URL}${VERSION}/image?imageid=${image.id.S}_low.jpg`}
               alt="image from db"
@@ -68,7 +74,6 @@ const Posts: FC<Props> = ({ images, BASE_URL, VERSION }) => {
           </div>
         ))}
       </div>
-
     </div>
   );
 };

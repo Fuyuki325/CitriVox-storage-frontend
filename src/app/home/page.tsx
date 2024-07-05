@@ -6,8 +6,10 @@ import Image from "next/image";
 import Logo from "@/../../public/CitriVox_PNG.png";
 import Posts from "@/components/posts/Posts";
 import axios from "axios";
+import UploadSearchPosts from "@/components/UploadSearchPosts";
 
 const Home = async () => {
+  
   const response = await axios({
     method: 'get',
     url: `${process.env.BASE_URL}${process.env.VERSION}/images`,
@@ -28,15 +30,10 @@ const Home = async () => {
         img={pfp}
         name="Fuyuki Malahom"
       />
-      <Upload 
+      <UploadSearchPosts 
         BASE_URL={process.env.BASE_URL}
         VERSION={process.env.VERSION}
-      />
-      <Search />
-      <Posts 
         images={images}
-        BASE_URL={process.env.BASE_URL}
-        VERSION={process.env.VERSION}
       />
     </div>
   );

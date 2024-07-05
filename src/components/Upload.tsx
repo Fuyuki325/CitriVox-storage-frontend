@@ -4,15 +4,35 @@ import toast from "react-hot-toast";
 import { FC } from "react";
 import axios from "axios";
 
+interface Image {
+  id: InnerObject;
+  name: InnerObject;
+  quality: InnerObject;
+}
+interface InnerObject {
+  S: string;
+}
+
 interface Props {
   BASE_URL: string | undefined;
   VERSION: string | undefined;
+  setFiles: Function;
+  files: File | null;
+  imageList: Image[];
+  setImageList: Function;
 }
 
-const Upload: FC<Props> = ({ BASE_URL, VERSION }) => {
-  const [files, setFiles] = useState<File | null>(null);
+const Upload: FC<Props> = ({
+  BASE_URL,
+  VERSION,
+  setFiles,
+  files,
+  imageList,
+  setImageList,
+}) => {
   const [dragging, setDragging] = useState<Boolean | null>(null);
   const [processing, setProcessing] = useState(false);
+  const [error, setError] = useState<String | null>(null);
 
   const handleDragOver = (event: React.DragEvent<HTMLDivElement>) => {
     event.preventDefault();
@@ -23,8 +43,8 @@ const Upload: FC<Props> = ({ BASE_URL, VERSION }) => {
     event.preventDefault();
     setDragging(false);
     if (event.dataTransfer.files.length > 1) {
-      toast.error("Only 1 file please")
-      return
+      toast.error("Only 1 file please");
+      return;
     }
     setFiles(event.dataTransfer.files[0]);
   };
@@ -34,17 +54,27 @@ const Upload: FC<Props> = ({ BASE_URL, VERSION }) => {
     setDragging(false);
   };
 
-  const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileChange = async (
+    event: React.ChangeEvent<HTMLInputElement>,
+  ) => {
+    const validFileTypes = ["image/jpg", "image/jpeg"];
     if (event.target.files) {
+      if (!validFileTypes.includes(event.target.files[0].type)) {
+        setError("File must be in JPG/PNG format");
+        return;
+      }
       setFiles(event.target.files[0]);
       const response = await axios({
-        method: 'post',
+        method: "post",
         url: `${BASE_URL}${VERSION}/image`,
-        data: {
-          firstName: 'Fred',
-          lastName: 'Flintstone'
-        }
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+        data: event.target.files[0],
       });
+      // Need to put an actual Image object with id, name, and quality. second api call to add to the client side may be needed
+      // setImageList((prevList) => [...prevList, event.target.files[0]]);
+      toast.success("Image Uploaded!");
     }
   };
 

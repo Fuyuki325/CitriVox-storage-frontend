@@ -13,6 +13,14 @@ interface InnerObject {
   S: string;
 }
 
+
+/**
+ * {
+   id: { S: aidfhdafhoafe }
+   name: { S: aidfhdafhoafe }
+   quality: { S: aidfhdafhoafe }
+    }
+ */
 interface Props {
   BASE_URL: string | undefined;
   VERSION: string | undefined;
@@ -39,14 +47,39 @@ const Upload: FC<Props> = ({
     setDragging(true);
   };
 
-  const handleOnDrop = (event: React.DragEvent<HTMLDivElement>) => {
+  const handleOnDrop = async (event: React.DragEvent<HTMLDivElement>) => {
     event.preventDefault();
     setDragging(false);
+
+    const validFileTypes = ["image/jpg", "image/jpeg"];
+
+    if (!validFileTypes.includes(event.dataTransfer.files[0].type)) {
+      toast.error("Must be JPG only please");
+      return;
+    }
     if (event.dataTransfer.files.length > 1) {
       toast.error("Only 1 file please");
       return;
     }
     setFiles(event.dataTransfer.files[0]);
+    const response = await axios({
+      method: "post",
+      url: `${BASE_URL}${VERSION}/image`,
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+      data: event.dataTransfer.files[0],
+    });
+    /**
+     * const img = await axios({
+    method: "get",
+    url: `${BASE_URL}${VERSION}/image?imageid=${id}`,
+    });
+    console.log(img);
+    
+    setImageList((prevList) => [...prevList, img]);
+    */
+    toast.success("Image Uploaded!");
   };
 
   const handleDragLeave = (event: React.DragEvent<HTMLDivElement>) => {
@@ -72,8 +105,8 @@ const Upload: FC<Props> = ({
         },
         data: event.target.files[0],
       });
-      // Need to put an actual Image object with id, name, and quality. second api call to add to the client side may be needed
-      // setImageList((prevList) => [...prevList, event.target.files[0]]);
+
+      setImageList((prevList: Image[]) => [...prevList, response.data]);
       toast.success("Image Uploaded!");
     }
   };

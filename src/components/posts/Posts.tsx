@@ -32,7 +32,8 @@ const Posts: FC<Props> = ({
   imageList,
   setImageList,
 }) => {
-  const copy = () => {
+  const copy = (imageid: string) => {
+    navigator.clipboard.writeText(imageid);
     toast.success("Copied URL!");
   };
 
@@ -52,7 +53,7 @@ const Posts: FC<Props> = ({
         {imageList.map((image) => (
           <div key={image.id.S} className="relative w-56 h-56 group">
             <Image
-              src={`${BASE_URL}${VERSION}/image?imageid=${image.id.S}_low.jpg`}
+              src={`${BASE_URL}${VERSION}/image?imageid=${image.id.S}_low`}
               alt="image from db"
               fill={true}
               className="object-cover rounded-md group-hover:scale-105"
@@ -60,7 +61,7 @@ const Posts: FC<Props> = ({
             <div className="absolute top-0 left-0 w-full h-full bg-black rounded-md opacity-0 group-hover:opacity-80 group-hover:scale-105 transition-opacity duration-300"></div>
             <div
               className="opacity-0 group-hover:opacity-100 hover:bg-blue-500 hover:text-white active:bg-blue-200 absolute flex items-center justify-center top-[50%] left-[50%] -translate-y-2/4 -translate-x-2/4 px-4 py-2 bg-white border-2 border-slate-400 rounded-md space-x-2 transition-all duration-300 hover:cursor-pointer"
-              onClick={copy}
+              onClick={() => copy(image.id.S)}
             >
               <FiCopy className="text-2xl" />
               <div className="font-times font-bold text-xl">Copy</div>

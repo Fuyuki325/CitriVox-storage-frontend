@@ -13,7 +13,6 @@ interface InnerObject {
   S: string;
 }
 
-
 /**
  * {
    id: { S: aidfhdafhoafe }
@@ -61,25 +60,27 @@ const Upload: FC<Props> = ({
       toast.error("Only 1 file please");
       return;
     }
-    setFiles(event.dataTransfer.files[0]);
-    const response = await axios({
-      method: "post",
-      url: `${BASE_URL}${VERSION}/image`,
-      headers: {
-        "Content-Type": "multipart/form-data",
-      },
-      data: event.dataTransfer.files[0],
-    });
-    /**
-     * const img = await axios({
-    method: "get",
-    url: `${BASE_URL}${VERSION}/image?imageid=${id}`,
-    });
-    console.log(img);
-    
-    setImageList((prevList) => [...prevList, img]);
-    */
-    toast.success("Image Uploaded!");
+    try {
+      setFiles(event.dataTransfer.files[0]);
+      const response = await axios({
+        method: "post",
+        url: `${BASE_URL}${VERSION}/image`,
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+        data: event.dataTransfer.files[0],
+      });
+  
+      const img = response.data;
+      const newImageList = [img, ...imageList.slice(0)];
+  
+      setImageList(newImageList);
+  
+      toast.success("Image Uploaded!");
+    } catch (e: any) {
+      setError(e);
+      toast.error(`Image Failed to Upload: ${e}`);
+    }
   };
 
   const handleDragLeave = (event: React.DragEvent<HTMLDivElement>) => {
@@ -91,11 +92,15 @@ const Upload: FC<Props> = ({
     event: React.ChangeEvent<HTMLInputElement>,
   ) => {
     const validFileTypes = ["image/jpg", "image/jpeg"];
-    if (event.target.files) {
-      if (!validFileTypes.includes(event.target.files[0].type)) {
-        setError("File must be in JPG/PNG format");
-        return;
-      }
+    if (!event.target.files) {
+      return;
+    }
+    if (!validFileTypes.includes(event.target.files[0].type)) {
+      setError("File must be in JPG/PNG format");
+      return;
+    }
+    setProcessing(true);
+    try {
       setFiles(event.target.files[0]);
       const response = await axios({
         method: "post",
@@ -105,14 +110,18 @@ const Upload: FC<Props> = ({
         },
         data: event.target.files[0],
       });
-      const newImageList = [
-        response.data,
-        ...imageList.slice(0)
-      ];
+      const newImageList = [response.data, ...imageList.slice(0)];
       setImageList(newImageList);
       toast.success("Image Uploaded!");
+    } catch (e: any) {
+      setError(e);
+      toast.error(`Image Failed to Upload: ${e}`);
     }
+    setProcessing(false);
   };
+  const makeFileNull = (event: any) => {
+    event.target.value = null;
+  }
 
   return (
     <div
@@ -125,10 +134,11 @@ const Upload: FC<Props> = ({
     >
       <div className="relative flex flex-col items-center justify-center w-full h-full p-4 space-y-4 text-center">
         <label className="inline-flex items-center justify-center px-4 py-2 text-lg font-semibold text-white bg-orange-500 rounded-md cursor-pointer hover:bg-orange-600">
-          Upload
+          {processing ? "Processing..." : "Upload"}
           <input
             type="file"
             onChange={handleFileChange}
+            onClick={makeFileNull}
             className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
           />
         </label>

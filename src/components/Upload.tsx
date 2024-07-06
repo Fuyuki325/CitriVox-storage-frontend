@@ -105,8 +105,11 @@ const Upload: FC<Props> = ({
         },
         data: event.target.files[0],
       });
-
-      setImageList((prevList: Image[]) => [...prevList, response.data]);
+      const newImageList = [
+        response.data,
+        ...imageList.slice(0)
+      ];
+      setImageList(newImageList);
       toast.success("Image Uploaded!");
     }
   };
